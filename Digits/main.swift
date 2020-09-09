@@ -10,47 +10,52 @@ import Foundation
 
 func check(_ i: Int) -> Bool {
 	
-	let splitted = split(i)
-	let digitsCount = countOfDigits(splitted)
+	var splitted = [Int](repeating: 0, count: 10)
+	var digitsOccurenceCount = [Int](repeating: 0, count: 10)
+	
+	let digitsCount = split(i, digits: &splitted)
+	countOfDigits(splitted, count:digitsCount, occurenceCount: &digitsOccurenceCount)
 	//	print("\(splitted)")
 	//	print("\(digitsCount)")
 	
-	var idx = 0
-	while idx < splitted.count {
-		let neededCount = splitted[idx]
-		let actualCount = digitsCount[idx]
+	var idxSplitted = digitsCount - 1
+	var idxOccurence = 0
+	while idxSplitted >= 0 {
+		let neededCount = splitted[idxSplitted]
+		let actualCount = digitsOccurenceCount[idxOccurence]
 		
 		if neededCount != actualCount {
 			break
 		}
 		
+		idxSplitted -= 1
+		idxOccurence += 1
+	}
+	
+	return idxSplitted < 0
+}
+
+func split(_ num: Int, digits: inout [Int]) -> Int {
+	var quotient = num
+	var idx = 0
+	
+	while quotient > 0 {
+		let (q, r) = quotient.quotientAndRemainder(dividingBy: 10)
+		digits[idx] = r
+		quotient = q
 		idx += 1
 	}
 	
-	return idx == splitted.count
+	return idx
 }
 
-func split(_ i:Int) -> [Int] {
-	var digits = [Int]()
-	
-	var quotient = i
-	while quotient > 0 {
-		let (q, r) = quotient.quotientAndRemainder(dividingBy: 10)
-		digits.append(r)
-		quotient = q
+func countOfDigits(_ digits: [Int], count: Int, occurenceCount: inout [Int]) {
+	var idx = 0
+	while idx < count {
+		let digit = digits[idx]
+		occurenceCount[digit] += 1
+		idx += 1
 	}
-	
-	return digits.reversed()
-}
-
-func countOfDigits(_ digits: [Int]) -> [Int] {
-	var count = [Int](repeating: 0, count: 10)
-	
-	for digit in digits {
-		count[digit] += 1
-	}
-	
-	return count
 }
 
 for i in 0...999999999 {
@@ -59,5 +64,16 @@ for i in 0...999999999 {
 	}
 }
 
-//check(203055)
+//let res = check(821000001000)
+
+//0
+//1210
+//2020
+//21200
+//3211000
+//42101000
+//521001000
+//6210001000
+//72100001000
+//821000001000
 
